@@ -1,0 +1,2 @@
+# kusanagi-command-custom
+KUSANAGI標準のShellScriptをカスタマイズしたもの
