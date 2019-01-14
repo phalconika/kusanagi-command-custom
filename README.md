@@ -11,10 +11,12 @@ provision の際に --dbskip を指定することでDB名、DBユーザ、DBパ
 phpMyAdmin のデプロイ
 
 ## install
+```
 git clone git@github.com:/qkotsudo/kusanagi-command-custom
 cd kusanagi-command-custom
 chmod a+x install.sh
 sudo ./install.sh
+```
 
 ## usage
 ### kusanagi provision option
