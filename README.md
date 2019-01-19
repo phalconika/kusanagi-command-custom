@@ -37,12 +37,13 @@ phpMyAdmin 用のプロファイルです。
 ## 差分メモ
 functions.sh  
 	--phpMyAdmin, --dbskip, --dst-dir の説明追加
+	k_read_profile()内のTARGET_DIR調整
 
 help.sh  
 	--phpMyAdmin, --dbskip, --dst-dir の説明追加
 	
 provision.sh  
-	--phpMyAdmin, --dbskip, --dst-dir, --dst-name を処理する宣言追加  
+	--phpMyAdmin, --dbskip, --dst-dir を処理する宣言追加  
 	プロファイル名の文字数を253文字以内まで拡張  
 	$TARGET_DIR への代入調整  
 	--dbskip の処理追加  
