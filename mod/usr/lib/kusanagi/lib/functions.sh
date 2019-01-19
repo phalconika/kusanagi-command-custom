@@ -144,6 +144,7 @@ function k_read_profile() {
 		fi
 		IS_WRITABLE=1
 	fi
+
 	if [[ ! -v KUSANAGI_FQDN ]] ; then
 		KUSANAGI_FQDN=$(k_get_fqdn $PROFILE)
 		if [ "$KUSANAGI_FQDN" = "" ] ; then
@@ -163,7 +164,8 @@ function k_read_profile() {
 	HTTPD_HTTP="/etc/httpd/conf.d/${PROFILE}_http.conf"
 	HTTPD_HTTPS="/etc/httpd/conf.d/${PROFILE}_ssl.conf"
 
-	TARGET_DIR=/home/kusanagi/$PROFILE
+	# TARGET_DIR=/home/kusanagi/$PROFILE
+	TARGET_DIR=$KUSANAGI_DIR
 	if [ "$KUSANAGI_TYPE" = "WordPress" ] ; then
 		if [ -e $(dirname `realpath $TARGET_DIR/DocumentRoot`)/wp-config.php ]; then
 			WPCONFIG=$(dirname `realpath $TARGET_DIR/DocumentRoot`)/wp-config.php
