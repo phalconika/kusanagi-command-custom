@@ -20,7 +20,7 @@ if [ $VERSION_CURRENT != $VERSION_TARGET ]; then
 fi
 
 # rsync で配置
-DIR=`pwd`
+DIR=$(cd $(dirname $0); pwd)
 rsync -rltv --progress $DIR/mod/usr/lib/kusanagi/ /usr/lib/kusanagi/
 echo "kusanagi-command-custom install successfully done."
 exit 0

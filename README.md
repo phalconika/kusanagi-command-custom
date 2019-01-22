@@ -9,12 +9,12 @@ KUSANAGI標準のShellScriptをカスタマイズしたもの
 ・任意のディレクトリへの provision  
 ・provision の際に --dbskip を指定することでDB名、DBユーザ、DBパスワードの確認とDB自動作成をスキップ可能  
 ・phpMyAdmin のデプロイ  
+・provision 先のディレクトリに etc サブディレクトリを作成し、/etc/ 以下から SymbolicLink を張りつつ kusanagi 権限で編集可能に変更  
 
 ## install
 ```
-git clone git@github.com:/qkotsudo/kusanagi-command-custom
+git clone https://github.com/qkotsudo/kusanagi-command-custom.git
 cd kusanagi-command-custom
-chmod a+x install.sh
 sudo ./install.sh
 ```
 
@@ -49,6 +49,8 @@ provision.sh
 	--dbskip の処理追加  
 
 virt.sh  
+	サブディレクトリ作成を先頭に移動、etcディレクトリ作成を追加  
+	apache, nginx, monit の設定ファイルをサブディレクトリ内の etc に変更し、/etc/ の各設定用ディレクトリ内へ SymbolicLink  
 	既存設定ファイルのバックアップをコメントアウト(monitでエラー出るので)  
 	$PROFILE の置き換え処理調整  
 
@@ -57,4 +59,3 @@ deploy-phpMyAdmin.sh
 
 deploy-*.sh  
 	プロビジョン先ディレクトリ調整  
-	追加設定用etcディレクトリ設置  

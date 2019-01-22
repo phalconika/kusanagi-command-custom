@@ -4,6 +4,18 @@ ITEMS=("etc/monit.d/fqdn_httpd.conf" "etc/monit.d/fqdn_nginx.conf" "etc/nginx/co
 #PROFILE="www"
 #FQDN="test.com"
 
+if [ "$APP" != "Rails" ] && [ "$APP" != "concrete5" ]; then
+	mkdir -p $TARGET_DIR/DocumentRoot
+	mkdir -p $TARGET_DIR/log/nginx
+	mkdir -p $TARGET_DIR/log/httpd
+fi
+mkdir -p $TARGET_DIR/etc/httpd/conf.d
+mkdir -p $TARGET_DIR/etc/nginx/conf.d
+mkdir -p $TARGET_DIR/etc/monit.d
+mkdir -p $TARGET_DIR/etc/ssl
+mkdir -p $TARGET_DIR/etc/htpasswd
+chown kusanagi.kusanagi $TARGET_DIR/etc
+
 local IS_ROOT_DOMAIN=$(is_root_domain $FQDN;echo $?)
 local ADDFQDN=
 if  [ "$IS_ROOT_DOMAIN" -eq 0 ]  ; then
@@ -13,7 +25,9 @@ elif [ "$IS_ROOT_DOMAIN" -eq 1 ] ; then
 fi
 for ITEM in ${ITEMS[@]} ; do
 	local RESOURCE="/usr/lib/kusanagi/resource"
-	TARGET="/"`echo $ITEM | sed "s/fqdn/$PROFILE/"`
+	# TARGET="/"`echo $ITEM | sed "s/fqdn/$PROFILE/"`
+	TARGET="$TARGET_DIR/"`echo $ITEM | sed "s/fqdn/$PROFILE/"`
+	TARGETLINK="/"`echo $ITEM | sed "s/fqdn/$PROFILE/"`
 	if [ -f "$RESOURCE/${ITEM}.${APP}" ] ; then
 		SOURCE="$RESOURCE/${ITEM}.${APP}"
 	else
@@ -26,6 +40,7 @@ for ITEM in ${ITEMS[@]} ; do
 	local RET=$?
 	local PROV="# Common specific setting"
 	cp $SOURCE $TARGET
+	ln -fs $TARGET $TARGETLINK
 	if [ $RET -eq 0 ]; then
 		if [ -f "$RESOURCE/${ITEM}.${APP}.common" ] ; then
 			sed -i "/^$PROV start/r /dev/stdin" $TARGET < $RESOURCE/${ITEM}.${APP}.common
@@ -61,11 +76,11 @@ for ITEM in ${ITEMS[@]} ; do
 	fi
 done
 
-if [ "$APP" != "Rails" ] && [ "$APP" != "concrete5" ]; then
-	mkdir -p $TARGET_DIR/DocumentRoot
-	mkdir -p $TARGET_DIR/log/nginx
-	mkdir -p $TARGET_DIR/log/httpd
-fi
+#if [ "$APP" != "Rails" ] && [ "$APP" != "concrete5" ]; then
+#	mkdir -p $TARGET_DIR/DocumentRoot
+#	mkdir -p $TARGET_DIR/log/nginx
+#	mkdir -p $TARGET_DIR/log/httpd
+#fi
 
 if [ \! -e /usr/lib/kusanagi/lib/deploy-$APP.sh ] ; then
 	echo $(eval_gettext "Cannot deploy \$APP")

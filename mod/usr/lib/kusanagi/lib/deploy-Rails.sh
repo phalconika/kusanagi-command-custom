@@ -7,8 +7,6 @@ cd /home/kusanagi
 
 RAILS_BASE_DIR=$TARGET_DIR
 
-cp -r /usr/lib/kusanagi/skel/etc $TARGET_DIR/etc
-
 chown -R kusanagi.kusanagi $RAILS_BASE_DIR
 
 servers=(nginx httpd)

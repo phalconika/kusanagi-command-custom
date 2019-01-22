@@ -13,8 +13,6 @@ function deploy_drupal8() {
 
 	rm -rf $WORKDIR
 
-	cp -r /usr/lib/kusanagi/skel/etc $TARGET_DIR/etc
-
 	chown -R kusanagi.kusanagi $TARGET_DIR
 	cp sites/default/default.settings.php sites/default/settings.php
 	chown -R kusanagi:www sites/default/

@@ -13,8 +13,6 @@ for server in ${servers[@]}; do
 	fi
 done
 
-cp -r /usr/lib/kusanagi/skel/etc $TARGET_DIR/etc
-
 chown -R kusanagi.kusanagi $APP_BASE_DIR
 
 cd ${PROFILE}/public

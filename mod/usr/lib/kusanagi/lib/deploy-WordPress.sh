@@ -21,8 +21,6 @@ else
     cp -p /usr/lib/kusanagi/resource/wp-config-sample/en_US/wp-config-sample.php $TARGET_DIR/DocumentRoot/
 fi
 
-cp -r /usr/lib/kusanagi/skel/etc $TARGET_DIR/etc
-
 #PREFIX=`cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 8 | head -n 1 | uniq`
 cd $TARGET_DIR/DocumentRoot
 #/usr/bin/wp db create
