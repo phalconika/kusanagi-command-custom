@@ -159,10 +159,10 @@ function k_read_profile() {
 		IS_WRITABLE=1
 	fi
 
-	NGINX_HTTP="/etc/nginx/conf.d/${PROFILE}_http.conf"
-	NGINX_HTTPS="/etc/nginx/conf.d/${PROFILE}_ssl.conf"
-	HTTPD_HTTP="/etc/httpd/conf.d/${PROFILE}_http.conf"
-	HTTPD_HTTPS="/etc/httpd/conf.d/${PROFILE}_ssl.conf"
+	NGINX_HTTP="${KUSANAGI_DIR}/etc/nginx/conf.d/${PROFILE}_http.conf"
+	NGINX_HTTPS="${KUSANAGI_DIR}/etc/nginx/conf.d/${PROFILE}_ssl.conf"
+	HTTPD_HTTP="${KUSANAGI_DIR}/etc/httpd/conf.d/${PROFILE}_http.conf"
+	HTTPD_HTTPS="${KUSANAGI_DIR}/etc/httpd/conf.d/${PROFILE}_ssl.conf"
 
 	# TARGET_DIR=/home/kusanagi/$PROFILE
 	TARGET_DIR=$KUSANAGI_DIR
@@ -1674,7 +1674,7 @@ function k_target() {
 				fi
 			done
 		fi
-	elif [[ "$2" =~ ^[a-zA-Z0-9._-]{3,24}$ ]]; then
+	elif [[ "$2" =~ ^[a-zA-Z0-9._-]{3,253}$ ]]; then
 		PROFILE=$2
 		k_read_profile $PROFILE dont
 		#KUSANAGI_DIR="/home/kusanagi/$2"

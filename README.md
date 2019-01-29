@@ -1,7 +1,7 @@
 # kusanagi-command-custom
 KUSANAGI標準のShellScriptをカスタマイズしたもの
 
-挙動確認バージョン : 8.4.2-1
+挙動確認バージョン : 8.4.2-1 on AWS
 
 あくまで本家KUSANAGIを使いこなせている or ドキュメントをしっかり読んで理解している人向けです。
 
@@ -36,8 +36,10 @@ phpMyAdmin 用のプロファイルです。
 
 ## 差分メモ
 functions.sh  
-	--phpMyAdmin, --dbskip, --dst-dir の説明追加
-	k_read_profile()内のTARGET_DIR調整
+	--phpMyAdmin, --dbskip, --dst-dir の説明追加  
+	k_read_profile()内のTARGET_DIR, NGINX_HTTP, NGINX_HTTPS, HTTPD_HTTP, HTTPD_HTTPS調整
+	k_target()内のプロファイル名判別の文字数を最大253文字に変更  
+	
 
 help.sh  
 	--phpMyAdmin, --dbskip, --dst-dir の説明追加
@@ -59,3 +61,6 @@ deploy-phpMyAdmin.sh
 
 deploy-*.sh  
 	プロビジョン先ディレクトリ調整  
+
+remove.sh  
+	TARGET_DIR調整

@@ -317,10 +317,10 @@ function k_provision {
 	KUSANAGI_DBPASS=$DBPASS
 	# write to config file
 	k_write_profile $PROFILE
-	NGINX_HTTP="/etc/nginx/conf.d/${PROFILE}_http.conf"
-	NGINX_HTTPS="/etc/nginx/conf.d/${PROFILE}_ssl.conf"
-	HTTPD_HTTP="/etc/httpd/conf.d/${PROFILE}_http.conf"
-	HTTPD_HTTPS="/etc/httpd/conf.d/${PROFILE}_ssl.conf"
+	NGINX_HTTP="{$TARGET_DIR}/etc/nginx/conf.d/${PROFILE}_http.conf"
+	NGINX_HTTPS="{$TARGET_DIR}/etc/nginx/conf.d/${PROFILE}_ssl.conf"
+	HTTPD_HTTP="{$TARGET_DIR}/etc/httpd/conf.d/${PROFILE}_http.conf"
+	HTTPD_HTTPS="{$TARGET_DIR}/etc/httpd/conf.d/${PROFILE}_ssl.conf"
 
 	if ! source /usr/lib/kusanagi/lib/virt.sh ; then
 		_k_remove -y ${PROFILE}
