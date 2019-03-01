@@ -15,4 +15,6 @@ sudo -u kusanagi ${KUSANAGI_COMPOSER_BIN} update
 sudo -u kusanagi yarn install
 
 # 多言語化
+# ※ ↓ 2019/03/01現在、4.8.5でエラーが出るので過去バージョンの po をコピる
+sudo -u kusanagi cp -R /usr/lib/kusanagi/resource/phpMyAdmin/po $TARGET_DIR/DocumentRoot/
 sudo -u kusanagi scripts/generate-mo
