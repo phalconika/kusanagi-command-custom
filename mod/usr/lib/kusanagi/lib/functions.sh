@@ -1687,7 +1687,7 @@ function k_target() {
 				# config file check
 				 [ -d $KUSANAGI_DIR/public/concrete ] || return
 				;;
-			"drupal8")
+			"drupal7"|"drupal8")
 				# config file is nothing
 				[ -e $KUSANAGI_DIR/DocumentRoot/sites/default/settings.php ] || return
 				;;

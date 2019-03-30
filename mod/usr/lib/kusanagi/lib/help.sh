@@ -38,6 +38,8 @@ function helphelp {
 				echo "		"$(eval_gettext "Provision new profile to use LAMP.")
 				echo "	"$(eval_gettext "Option: --c5|--concrete5")
 				echo "		"$(eval_gettext "Provision new profile to use Concrete5.")
+				echo "	"$(eval_gettext "Option: --drupal7")
+				echo "		"$(eval_gettext "Provision new profile to use Drupal7.")
 				echo "	"$(eval_gettext "Option: --drupal|--drupal8")
 				echo "		"$(eval_gettext "Provision new profile to use Drupal8.")
 				echo "	"$(eval_gettext "Option: --phpmyadmin|--phpMyAdmin")

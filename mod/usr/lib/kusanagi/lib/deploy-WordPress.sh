@@ -31,6 +31,11 @@ cp -p /usr/lib/kusanagi/resource/DocumentRoot/.htaccess $TARGET_DIR/DocumentRoot
 cp -rp /usr/lib/kusanagi/resource/settings $TARGET_DIR/
 cp -rp /usr/lib/kusanagi/resource/tools $TARGET_DIR/
 
+if [ -d /home/kusanagi/.kusanagi/resources/mu-kusanagi-business-edition ]; then
+    cp -rp /home/kusanagi/.kusanagi/resources/mu-kusanagi-business-edition/* /home/kusanagi/$PROFILE/DocumentRoot/wp-content/mu-plugins/
+    chown -R kusanagi.kusanagi /home/kusanagi/$PROFILE/DocumentRoot/wp-content/mu-plugins/
+fi
+
 # get Wordpress plugin
 function get_wp_plugin {
 	local PLUGIN_NAME=$1
@@ -173,10 +178,13 @@ chown -R kusanagi.kusanagi $TARGET_DIR
 chmod 0777 $TARGET_DIR/DocumentRoot
 chmod 0777 $TARGET_DIR/DocumentRoot/wp-content
 chmod 0777 $TARGET_DIR/DocumentRoot/wp-content/uploads
-if [ ! -e $TARGET_DIR/DocumentRoot/wp-content/languages ]; then
-	mkdir $TARGET_DIR/DocumentRoot/wp-content/languages
-	chown kusanagi.kusanagi $TARGET_DIR/DocumentRoot/wp-content/languages
+if [ ! -d $TARGET_DIR/DocumentRoot/wp-content/languages/plugins ]; then
+        mkdir -p $TARGET_DIR/DocumentRoot/wp-content/languages/plugins
 fi
+if [ ! -d $TARGET_DIR/DocumentRoot/wp-content/languages/themes ]; then
+        mkdir -p $TARGET_DIR/DocumentRoot/wp-content/languages/themes
+fi
+
 chmod 0777 -R $TARGET_DIR/DocumentRoot/wp-content/languages
 chmod 0777 -R $TARGET_DIR/DocumentRoot/wp-content/plugins
 sed -i "s/fqdn/$FQDN/g" $TARGET_DIR/tools/bcache.clear.php

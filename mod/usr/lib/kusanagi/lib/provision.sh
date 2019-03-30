@@ -85,6 +85,9 @@ function k_provision {
 			'--lamp'|'--LAMP')
 				APP='lamp'
 				;;
+			'--drupal7')
+				APP='drupal7'
+				;;
 			'--drupal'|'--drupal8')
 				APP='drupal8'
 				;;
@@ -370,14 +373,14 @@ function k_db_provision () {
 		fi
 
 		# DB already check
-		echo 'show databases' | mysql -uroot -p"$DB_ROOT_PASS" | fgrep -w $DBNAME > /dev/null
+		echo 'show databases' | mysql -uroot -p"$DB_ROOT_PASS" | fgrep -x $DBNAME > /dev/null
 		if [ $? -eq 0 ] ; then
 			echo $(eval_gettext "That database(\$DBNAME) already exists.")
 			return 1
 		fi
 
 		# DB user already check
-		echo "SELECT User FROM mysql.user" | mysql -uroot -p"$DB_ROOT_PASS" | fgrep -w $DBUSER > /dev/null
+		echo "SELECT User FROM mysql.user" | mysql -uroot -p"$DB_ROOT_PASS" | fgrep -x $DBUSER > /dev/null
 		if [ "$?" -eq 0 ] ; then
 			echo $(eval_gettext "That user(DBUSER) existing on DB. so exiting.") \
 					| sed "s|DBUSER|$DBUSER|"
