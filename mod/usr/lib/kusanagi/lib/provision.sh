@@ -39,21 +39,41 @@ function k_provision {
 				return 1
 			fi
 		elif [ $OPT_DBNAME ] ; then
-			if [[ "$OPT" =~ ^[a-zA-Z0-9._-]{3,64}$ ]]; then
-				DBNAME="$OPT"
-				OPT_DBNAME=
-			else
-				echo $(eval_gettext "option \$PRE_OPT \$OPT: please input [a-zA-Z0-9._-] 3 to 64 characters.")
-				return 1
+			if get_running_db_service | grep mariadb > /dev/null ; then
+				if [[ "$OPT" =~ ^[a-zA-Z0-9._-]{3,64}$ ]]; then
+					DBNAME="$OPT"
+				else
+					echo $(eval_gettext "option \$PRE_OPT \$OPT: please input [a-zA-Z0-9._-] 3 to 64 characters.")
+					return 1
+				fi
 			fi
+                       if get_running_db_service | grep psql > /dev/null ; then
+                               if [[ "$OPT" =~ ^[a-z0-9._-]{3,64}$ ]]; then
+                                       DBNAME="$OPT"
+                               else
+                                       echo $(eval_gettext "option \$PRE_OPT \$OPT: please input [a-z0-9._-] 3 to 64 characters.")
+                                       return 1
+                               fi
+                        fi
+                       OPT_DBNAME=
 		elif [ $OPT_DBUSER ] ; then
-			if [[ "$OPT" =~ ^[a-zA-Z0-9._-]{3,16}$ ]] ; then
-				DBUSER="$OPT"
-				OPT_DBUSER=
-			else
-				echo $(eval_gettext "Enter username for database. USE [a-zA-Z0-9.!#%+_-] 3 to 16 characters.")
-				return 1
+			if get_running_db_service | grep mariadb > /dev/null ; then
+				if [[ "$OPT" =~ ^[a-zA-Z0-9._-]{3,16}$ ]] ; then
+					DBUSER="$OPT"
+				else
+					echo $(eval_gettext "Enter username for database. USE [a-zA-Z0-9.!#%+_-] 3 to 16 characters.")
+					return 1
+				fi
+                       fi
+                       if get_running_db_service | grep psql > /dev/null ; then
+				if [[ "$OPT" =~ ^[a-z0-9._-]{3,16}$ ]] ; then
+					DBUSER="$OPT"
+				else
+					echo $(eval_gettext "Enter username for database. USE [a-z0-9.!#%+_-] 3 to 16 characters.")
+					return 1
+				fi
 			fi
+                       OPT_DBUSER=
 		elif [ $OPT_DBPASS ] ; then
 			if [[ "$OPT" =~ ^[a-zA-Z0-9\.\!\#\%\+\_\-]{8,}$ ]] ; then
 				DBPASS="$OPT"
@@ -277,7 +297,7 @@ function k_provision {
 			echo $(eval_gettext "Enter user name for database DBNAME.") \
 					| sed "s|DBNAME|$DBNAME|"
 			read LINE1
-			echo $(eval_gettext "Re-type user name for database DBNAME") \
+			echo $(eval_gettext "Re-type user name for database DBNAME.") \
 					| sed "s|DBNAME|$DBNAME|"
 			read LINE2
 			if [ "$LINE1" = "$LINE2" ] && [[ $LINE1 =~ ^[a-zA-Z0-9._-]{3,16}$ ]]; then

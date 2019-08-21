@@ -85,6 +85,7 @@ addon install|remove ADDON
 	* vuls (https://vuls.io/)
 	* tripwire (https://github.com/Tripwire/tripwire-open-source)
 	* suricata (https://suricata-ids.org/)
+	* shibboleth (https://www.shibboleth.net/) (Only available for KUSANAGI Business Edition.)
 ---------------------
 - security -
 waf {on|off}
@@ -364,11 +365,17 @@ function k_status() {
 
 function k_nginx() {
 	echo $(eval_gettext "use nginx")
-	if [ 0 -eq $(k_is_enabled httpd) ] ; then
-		systemctl stop httpd && systemctl disable httpd
+	RET=`nginx -t`
+	if [ 0 -eq $? ] ; then
+		if [ 0 -eq $(k_is_enabled httpd) ] ; then
+			systemctl stop httpd && systemctl disable httpd
+		fi
+		systemctl restart nginx && systemctl enable nginx
+		k_monit_reloadmonitor
+	else
+		MSG=$(eval_gettext "It has not been changed or restarted to Nginx.")
+		k_print_error "${MSG}"
 	fi
-	systemctl restart nginx && systemctl enable nginx
-	k_monit_reloadmonitor
 }
 
 function get_db_root_password() {
@@ -554,11 +561,17 @@ function k_get_fqdn() {
 
 function k_httpd() {
 	echo $(eval_gettext "use TARGET") | sed "s|TARGET|$1|"
-	if [ 0 -eq $(k_is_enabled nginx) ] ; then
-		systemctl stop nginx && systemctl disable nginx
+	RET=`httpd -t`
+	if [ 0 -eq $? ] ; then
+		if [ 0 -eq $(k_is_enabled nginx) ] ; then
+			systemctl stop nginx && systemctl disable nginx
+		fi
+		systemctl restart httpd && systemctl enable httpd
+		k_monit_reloadmonitor
+	else
+		MSG=$(eval_gettext "It has not been changed or restarted to httpd.")
+		k_print_error "${MSG}"
 	fi
-	systemctl restart httpd && systemctl enable httpd
-	k_monit_reloadmonitor
 }
 
 function k_phpfpm() {
@@ -766,6 +779,10 @@ function k_upgrade () {
 	case "${1}" in
 		"mariadb")
 			k_mariadb_upgrade ${FORCE_UPGRADE}
+		;;
+		"kusanagi")
+			source ${LIBDIR}/upgrade.sh
+			k_kusanagi_upgrade "$@"
 		;;
 		*)
 			echo $(eval_gettext "Please the name you want to upgrade.")
@@ -1769,12 +1786,10 @@ function k_update() {
 				case $is_upgrade in
 
 				y)
-					break
 				;;
 				*)
 						echo $(eval_gettext "Abort.")
 					exit 1
-					break
 				;;
 				esac
 			fi
@@ -1820,7 +1835,7 @@ function k_update() {
 		fi
 	;;
 	*)
-	break;;
+	;;
 
 	esac
 }
@@ -2153,7 +2168,7 @@ function k_generate_seckey() {
 	if [ ! -d /etc/kusanagi.d/ssl ] ; then
 		mkdir -p /etc/kusanagi.d/ssl
 	fi
-	if [ ! -e /etc/kusanagi.d/ssl/ssl_sess_ticket.key ] ; then
+	if [ ! -e /etc/kusanagi.d/ssl_sess_ticket.key ] ; then
 		openssl rand 48 > /etc/kusanagi.d/ssl_sess_ticket.key
 	fi
 	if [ ! -e /etc/kusanagi.d/ssl/dhparam.key ] ; then
