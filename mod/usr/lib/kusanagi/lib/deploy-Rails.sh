@@ -1,9 +1,8 @@
-TARGET_NAME=`echo $TARGET_DIR | awk -F "/" '{ print $NF }'`
-
 cd /home/kusanagi
 
-/usr/local/bin/gem install rails
-/bin/rails new $TARGET_NAME -d ${RAILS_DB}
+/usr/local/bin/gem install ${RAILS_VERSION:+-v $RAILS_VERSION} rails
+local _ver_rails=${RAILS_VERSION:+_${RAILS_VERSION}_}
+/bin/rails $_ver_rails new $PROFILE -d ${RAILS_DB}
 
 RAILS_BASE_DIR=$TARGET_DIR
 

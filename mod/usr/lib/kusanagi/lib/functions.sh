@@ -35,7 +35,8 @@ init [options]
 	[--tz TZ] [--lang [ja|en]] [--keyboard [ja|en]]
 	[--passwd PASSWD] [--phrase PHRASE|--no-phrase]
 	[--dbrootpass DBPASS]
-	[--nginx|--httpd] [--hhvm|--php7|--php5|--ruby24]
+	[--nginx|--httpd] [--hhvm|--php7|--php5]
+	[--ruby|--ruby24]
 setting [--fqdn domainname]
 ssl [options] profile
 	[--email email@example.com] [--cert file --key file]
@@ -68,6 +69,7 @@ php7
 php-fpm
 hhvm
 ruby2.4
+ruby2.6
 ---------------------
 - cache -
 bcache [on|off|clear [path [--dryrun]]]
@@ -237,6 +239,13 @@ function k_status() {
 	shift
 
 	ARG1="$1"
+	if [[ "$ARG1" = '--all' ]]; then
+		shift
+	fi
+	if [[ "$1" =~ ^[a-zA-Z0-9._-]{3,24}$ ]]; then
+		PROFILE=$1
+		k_read_profile $PROFILE dont
+	fi
 
 	local RET
 	[[ -n "$PROFILE" ]] && echo "Profile: $PROFILE"
@@ -622,34 +631,52 @@ function k_hhvm() {
 	_k_change_php_bin $CHANGE
 }
 
-function k_ruby24() {
-	echo $(eval_gettext "use TARGET") | sed "s|TARGET|$1|"
-	local RUBY_VERSION="2.4"
-	# Executable Ruby files
+function k_ruby() {
+	local RUBY_VER=$1
+	echo $(eval_gettext "use TARGET") | sed "s|TARGET|$2|"
+	# install ruby
+	local RUBY_NOW=$(rpm -qa| awk -F- '/kusanagi-ruby/ {print $3}' | awk -F\. '{printf("%s.%s", $1, $2)}')
+	if [ "x${RUBY_NOW}" != "x" ] && [ "x${RUBY_NOW}" != "x${RUBY_VER}" ] ; then
+		[ "x$RUBY_NOW" = "x2.6" ] && RUBY_NOW=
+		rpm -e --nodeps kusanagi-ruby${RUBY_NOW}
+	fi
+	local KUSANAGIRUBY=kusanagi-ruby
+	if [ "${RUBY_VER}" = "2.4" ] ; then
+		KUSANAGIRUBY="kusanagi-ruby${RUBY_VER}"
+	fi
+	yum install -y $KUSANAGIRUBY
+        # Executable Ruby files
 	local RUBY_EXECFILES=(ruby rdoc ri erb gem irb rake)
 	for R_EXE in ${RUBY_EXECFILES[@]} ; do
 		if [ -L /usr/local/bin/${R_EXE} ]; then
 			unlink /usr/local/bin/${R_EXE}
 		fi
-		ln -s /bin/${R_EXE}${RUBY_VERSION} /usr/local/bin/${R_EXE}
+		ln -s /bin/${R_EXE}${RUBY_VER} /usr/local/bin/${R_EXE}
 	done
 }
 
 function k_ruby_init() {
 
-	local rubyversion OPT_RUBY
+	local rubyversion
 	while :
 	do
 		echo $(eval_gettext "Then, Please tell me your ruby version.")
 		echo $(eval_gettext "1) Ruby2.4")
+		echo $(eval_gettext "2) Ruby2.6")
 		echo
-		echo -n $(eval_gettext "Which you using?(1): ")
+		echo -n $(eval_gettext "Which you using?(2): ")
 		read rubyversion
 		case "$rubyversion" in
-		""|"1" )
+		"1" )
 			echo
-			echo $(eval_gettext "You choose: Ruby2.4")
-			OPT_RUBY=ruby24
+			echo $(eval_gettext "You choose:") Ruby2.4
+			k_ruby 2.4
+			break
+			;;
+		""|"2" )
+			echo
+			echo $(eval_gettext "You choose:") Ruby2.6
+			k_ruby 2.6
 			break
 			;;
 		* )
@@ -725,6 +752,11 @@ function k_composer_init () {
 function k_rails_init() {
 	export RAILS_DB='mysql'
 
+	[ -e /usr/local/bin/ruby ] || k_ruby_init
+	if [ $(rpm -qa| awk -F- '/kusanagi-ruby/ {print $3}' | awk -F\. '{printf("%s.%s", $1, $2)}') = "2.4" ] ; then
+		export RAILS_VERSION=4.2.11.1
+		/usr/local/bin/gem install -v 3.5.2 sprockets
+	fi
 	if [ `yum repolist all | grep passenger | wc -l` -eq 0 ]; then
 		curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
 	fi
@@ -925,7 +957,7 @@ function k_addon_install_mroonga () {
 	fi
 
 	local RET
-	yum install -y https://packages.groonga.org/centos/groonga-release-1.3.0-1.noarch.rpm
+	yum install -y https://packages.groonga.org/centos/groonga-release-latest.noarch.rpm
 	yum install -y mariadb-10.1-mroonga groonga-tokenizer-mecab
 	systemctl restart mysql
 
