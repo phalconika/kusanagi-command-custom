@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # 動作確認バージョン設定
-VERSION_TARGET="8.4.5-3"
+VERSION_TARGET="8.4.5-7"
 
 # root権限での実行確認
 if [ ${EUID:-${UID}} != 0 ]; then

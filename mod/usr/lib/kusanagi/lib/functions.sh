@@ -46,6 +46,7 @@ ssl [options] profile
 	[--ct  [on|off] [--no-register|--noregister]]
 provision [options] profile
 	[--WordPress [--woo|--WooCommerce] [--wplang en_US|ja]|--lamp|--concrete5|--drupal|--rails|--phpMyAdmin]
+	[--fqdn domainname]
 	[--email mail_address|--no-email]
 	[--dbskip|[--dbname dbname] [--dbuser username] [--dbpass password]]
 	[--dst-dir destination_directory]
